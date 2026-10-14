@@ -7,6 +7,7 @@ Der Abschnitt einer Version wird beim Release automatisch als Release-Notiz verw
 ## [Unveröffentlicht]
 
 ### Geändert
+- Neues Programm-Icon (Wolke mit Aufwärtspfeil) statt Platzhalter.
 - GitHub-Repository `SPAENI-AG/d2c-DataUpload-MQTT` eingetragen; die Update-Prüfung ist damit aktiv.
 
 ## [1.2.0] - 2026-10-14
