@@ -62,10 +62,13 @@ Slash-Befehl: `/release x.y.z`.
 
 - [x] `OWNER` durch den echten GitHub-Organisationsnamen ersetzen: `Directory.Build.props` (`GitHubRepository`) und `README.md`.
       Solange `OWNER/…` drinsteht, ist die Update-Prüfung abgeschaltet (`UpdateChecker.IsConfigured`).
-- [ ] WPF-Build unter Windows verifizieren (wurde nur ausserhalb von Windows geschrieben; Kernlogik ist getestet).
-      Insbesondere: DPAPI-Verschlüsselung (`settings.json` darf nur `"PasswordProtected": "dpapi:…"` enthalten),
-      Update-Banner, Info-Fenster, Sprachwechsel.
-- [ ] Offizielles Icon statt Platzhalter `src/D2cDataUpload.App/Assets/icon.ico` (+ `icon.png`).
-- [ ] Screenshot `docs/screenshot.png` mit den Beispieldateien aus `docs/examples` (keine Kundendaten!) und im README einbinden.
+- [x] WPF-Build unter Windows verifiziert (Build + 32 Tests grün; DPAPI in `settings.json`, Info-Fenster, Sprachwechsel geprüft).
+- [x] Freigabe der Geschäftsleitung für die Veröffentlichung unter MIT erhalten.
+- [ ] Icon: aktuell ein eigener Entwurf (Wolke mit Pfeil, Commit 29f1c71); bei Bedarf durch ein offizielles Firmen-Icon ersetzen
+      (`src/D2cDataUpload.App/Assets/icon.ico` mit 16/32/48/256 px + `icon.png`).
+- [ ] Screenshot `docs/screenshot.png` mit den Beispieldateien aus `docs/examples` (keine Kundendaten!) und im README einbinden
+      (Platzhalter-Kommentar in `README.md` Zeile 9).
+- [ ] GitHub-Repository `SPAENI-AG/d2c-DataUpload-MQTT` leer und öffentlich anlegen, Remote `origin` setzen, `main` pushen.
+- [ ] Broker-Tests mit `mosquitto` im PATH (und TLS-Test mit `D2C_TLS_CONF`) ausführen; 5 Tests wurden bisher übersprungen.
+- [ ] Update-Banner prüfen, sobald das erste Release auf GitHub existiert.
 - [ ] Optional Code-Signing-Secrets `SIGN_PFX_BASE64`, `SIGN_PFX_PASSWORD` im Repository anlegen (sonst SmartScreen-Warnung).
-- [ ] Freigabe der Geschäftsleitung für die Veröffentlichung unter MIT.
