@@ -64,8 +64,7 @@ Slash-Befehl: `/release x.y.z`.
       Solange `OWNER/…` drinsteht, ist die Update-Prüfung abgeschaltet (`UpdateChecker.IsConfigured`).
 - [x] WPF-Build unter Windows verifiziert (Build + 32 Tests grün; DPAPI in `settings.json`, Info-Fenster, Sprachwechsel geprüft).
 - [x] Freigabe der Geschäftsleitung für die Veröffentlichung unter MIT erhalten.
-- [ ] Icon: aktuell ein eigener Entwurf (Wolke mit Pfeil, Commit 29f1c71); bei Bedarf durch ein offizielles Firmen-Icon ersetzen
-      (`src/D2cDataUpload.App/Assets/icon.ico` mit 16/32/48/256 px + `icon.png`).
+- [x] Icon (Wolke mit Pfeil, `src/D2cDataUpload.App/Assets/icon.ico` + `icon.png`) ist freigegeben.
 - [ ] Screenshot `docs/screenshot.png` mit den Beispieldateien aus `docs/examples` (keine Kundendaten!) und im README einbinden
       (Platzhalter-Kommentar in `README.md` Zeile 9).
 - [ ] GitHub-Repository `SPAENI-AG/d2c-DataUpload-MQTT` leer und öffentlich anlegen, Remote `origin` setzen, `main` pushen.
