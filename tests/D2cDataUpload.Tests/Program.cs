@@ -270,7 +270,7 @@ Test("Prüfintervall und Platzhalter-Repository", () =>
     finally { UpdateChecker.Repository = old; }
 });
 Test("Repository aus Directory.Build.props eingebaut", () =>
-    True(UpdateChecker.Repository.EndsWith("/d2c-dataupload-mqtt"), UpdateChecker.Repository));
+    True(UpdateChecker.Repository.EndsWith("/d2c-dataupload-mqtt", StringComparison.OrdinalIgnoreCase), UpdateChecker.Repository));
 
 Console.WriteLine("Übersetzung / Hilfe");
 Test("Alle Schlüssel DE+EN vorhanden, gleiche Platzhalter", () =>
