@@ -22,7 +22,7 @@ Entwickelt von **SPÄNI Elektro-Mechanik AG** (device2cloud).
 
 ## Installation
 
-1. Unter [**Releases**](https://github.com/OWNER/d2c-dataupload-mqtt/releases/latest) die Datei
+1. Unter [**Releases**](https://github.com/SPAENI-AG/d2c-DataUpload-MQTT/releases/latest) die Datei
    `d2c_DataUpload_MQTT_<version>_win-x64.zip` herunterladen.
 2. In einen eigenen Ordner entpacken und `d2c_DataUpload_MQTT.exe` starten.
    Keine Installation, keine Admin-Rechte, .NET ist enthalten. Windows 10/11 x64.
@@ -61,7 +61,7 @@ Details: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Support
 
-- Fehler und Wünsche: [GitHub Issues](https://github.com/OWNER/d2c-dataupload-mqtt/issues)
+- Fehler und Wünsche: [GitHub Issues](https://github.com/SPAENI-AG/d2c-DataUpload-MQTT/issues)
 - SPÄNI Elektro-Mechanik AG – [support.elektro-spaeni.ch](https://support.elektro-spaeni.ch) – support@elektro-spaeni.ch
 - Sicherheitslücken bitte nicht öffentlich melden: siehe [SECURITY.md](SECURITY.md)
 
@@ -79,5 +79,5 @@ QoS 0/1/2, automatic reconnect, resume from the last acknowledged row, TLS, encr
 German/English UI, browser-based help and update notification via GitHub Releases.
 
 **Install:** download `d2c_DataUpload_MQTT_<version>_win-x64.zip` from
-[Releases](https://github.com/OWNER/d2c-dataupload-mqtt/releases/latest), extract, run `d2c_DataUpload_MQTT.exe`.
+[Releases](https://github.com/SPAENI-AG/d2c-DataUpload-MQTT/releases/latest), extract, run `d2c_DataUpload_MQTT.exe`.
 No installation required. **Build:** .NET SDK 10, `dotnet build D2cDataUpload.slnx`. **License:** MIT.

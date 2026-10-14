@@ -60,7 +60,7 @@ Slash-Befehl: `/release x.y.z`.
 
 ## Offene Punkte (vor dem ersten öffentlichen Release)
 
-- [ ] `OWNER` durch den echten GitHub-Organisationsnamen ersetzen: `Directory.Build.props` (`GitHubRepository`) und `README.md`.
+- [x] `OWNER` durch den echten GitHub-Organisationsnamen ersetzen: `Directory.Build.props` (`GitHubRepository`) und `README.md`.
       Solange `OWNER/…` drinsteht, ist die Update-Prüfung abgeschaltet (`UpdateChecker.IsConfigured`).
 - [ ] WPF-Build unter Windows verifizieren (wurde nur ausserhalb von Windows geschrieben; Kernlogik ist getestet).
       Insbesondere: DPAPI-Verschlüsselung (`settings.json` darf nur `"PasswordProtected": "dpapi:…"` enthalten),

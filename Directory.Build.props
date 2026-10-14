@@ -6,7 +6,7 @@
   -->
   <PropertyGroup>
     <Version>1.2.0</Version>
-    <GitHubRepository>OWNER/d2c-dataupload-mqtt</GitHubRepository>
+    <GitHubRepository>SPAENI-AG/d2c-DataUpload-MQTT</GitHubRepository>
 
     <Product>m2v / d2c DataUpload MQTT</Product>
     <Company>SPÄNI Elektro-Mechanik AG</Company>
