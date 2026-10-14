@@ -1,0 +1,24 @@
+# Build
+bin/
+obj/
+artifacts/
+publish/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+*.DotSettings.user
+
+# Lokale Daten – nie einchecken
+*.csv
+!docs/examples/*.csv
+/settings.json
+secret.key
+*.pfx
+*.p12
+*.snk
+*.log
+
+# Claude Code: lokale Einstellungen
+.claude/settings.local.json

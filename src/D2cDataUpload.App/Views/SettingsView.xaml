@@ -1,0 +1,195 @@
+<UserControl x:Class="D2cDataUpload.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:D2cDataUpload.App">
+    <DockPanel Margin="6">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,0,0">
+            <Button x:Name="bt_Save" Content="{l:Tr Settings_Save}" Click="bt_Save_Click" Style="{StaticResource PrimaryButton}"/>
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,8,0">
+
+                <!-- Allgemein -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{l:Tr Grp_General}" VerticalAlignment="Center"/>
+                            <Button Style="{StaticResource HelpButton}" Tag="einstellungen-allgemein" Click="Help_Click" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{l:Tr Lbl_Language}" Style="{StaticResource FormLabel}"/>
+                        <ComboBox x:Name="cb_Language" Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                                  SelectionChanged="cb_Language_SelectionChanged">
+                            <ComboBoxItem Content="Deutsch" Tag="de"/>
+                            <ComboBoxItem Content="English" Tag="en"/>
+                        </ComboBox>
+                        <CheckBox x:Name="chk_CheckUpdates" Grid.Row="1" Grid.Column="1" Content="{l:Tr Chk_CheckUpdates}"
+                                  ToolTip="{l:Tr Tip_CheckUpdates}"/>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Broker -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{l:Tr Grp_Broker}" VerticalAlignment="Center"/>
+                            <Button Style="{StaticResource HelpButton}" Tag="einstellungen-broker" Click="Help_Click" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{l:Tr Lbl_Host}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_Host" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Grid.Row="1" Text="{l:Tr Lbl_Port}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_Port" Grid.Row="1" Grid.Column="1" Width="100" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="2" Text="{l:Tr Lbl_ClientId}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_ClientId" Grid.Row="2" Grid.Column="1"/>
+                        <TextBlock Grid.Row="3" Text="{l:Tr Lbl_User}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_User" Grid.Row="3" Grid.Column="1"/>
+                        <TextBlock Grid.Row="4" Text="{l:Tr Lbl_Password}" Style="{StaticResource FormLabel}"/>
+                        <PasswordBox x:Name="pb_Password" Grid.Row="4" Grid.Column="1" Margin="0,2" Padding="2"/>
+                        <TextBlock Grid.Row="5" Text="{l:Tr Lbl_Keepalive}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_Keepalive" Grid.Row="5" Grid.Column="1" Width="100" HorizontalAlignment="Left"/>
+                        <CheckBox x:Name="chk_Tls" Grid.Row="6" Grid.Column="1" Content="{l:Tr Chk_UseTls}"/>
+                        <TextBlock Grid.Row="7" Text="{l:Tr Lbl_CaFile}" Style="{StaticResource FormLabel}"/>
+                        <DockPanel Grid.Row="7" Grid.Column="1">
+                            <Button DockPanel.Dock="Right" Content="…" MinWidth="30" Margin="4,2,0,2" Click="bt_PickCa_Click"/>
+                            <TextBox x:Name="tb_CaFile" ToolTip="{l:Tr Tip_CaFile}"/>
+                        </DockPanel>
+                        <CheckBox x:Name="chk_TlsInsecure" Grid.Row="8" Grid.Column="1" Content="{l:Tr Chk_TlsInsecure}"/>
+                        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
+                            <Button x:Name="bt_Test" Content="{l:Tr Btn_TestConnection}" Click="bt_Test_Click"/>
+                            <TextBlock x:Name="tb_TestResult" Margin="10,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Senden -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{l:Tr Grp_Send}" VerticalAlignment="Center"/>
+                            <Button Style="{StaticResource HelpButton}" Tag="einstellungen-senden" Click="Help_Click" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{l:Tr Lbl_Qos}" Style="{StaticResource FormLabel}"/>
+                        <ComboBox x:Name="cb_Qos" Grid.Column="1" Width="260" HorizontalAlignment="Left">
+                            <ComboBoxItem Content="{l:Tr Qos0}"/>
+                            <ComboBoxItem Content="{l:Tr Qos1}"/>
+                            <ComboBoxItem Content="{l:Tr Qos2}"/>
+                        </ComboBox>
+                        <CheckBox x:Name="chk_Retain" Grid.Row="1" Grid.Column="1" Content="{l:Tr Chk_Retain}"/>
+                        <TextBlock Grid.Row="2" Text="{l:Tr Lbl_Rate}" Style="{StaticResource FormLabel}"/>
+                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                            <TextBox x:Name="tb_Rate" Width="100"/>
+                            <TextBlock Text="{l:Tr Unit_MsgPerSec}" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="3" Text="{l:Tr Lbl_MaxInflight}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_MaxInflight" Grid.Row="3" Grid.Column="1" Width="100" HorizontalAlignment="Left"
+                                 ToolTip="{l:Tr Tip_MaxInflight}"/>
+                    </Grid>
+                </GroupBox>
+
+                <!-- CSV -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{l:Tr Grp_Csv}" VerticalAlignment="Center"/>
+                            <Button Style="{StaticResource HelpButton}" Tag="einstellungen-csv" Click="Help_Click" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{l:Tr Lbl_Delimiter}" Style="{StaticResource FormLabel}"/>
+                        <ComboBox x:Name="cb_Delimiter" Grid.Column="1" Width="120" HorizontalAlignment="Left">
+                            <ComboBoxItem Content="auto"/>
+                            <ComboBoxItem Content=";"/>
+                            <ComboBoxItem Content=","/>
+                            <ComboBoxItem Content="tab"/>
+                            <ComboBoxItem Content="|"/>
+                        </ComboBox>
+                        <TextBlock Grid.Row="1" Text="{l:Tr Lbl_Encoding}" Style="{StaticResource FormLabel}"/>
+                        <ComboBox x:Name="cb_Encoding" Grid.Row="1" Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                                  ToolTip="{l:Tr Tip_Encoding}">
+                            <ComboBoxItem Content="utf-8"/>
+                            <ComboBoxItem Content="windows-1252"/>
+                            <ComboBoxItem Content="latin1"/>
+                        </ComboBox>
+                    </Grid>
+                </GroupBox>
+
+                <!-- JSON-Optionen -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{l:Tr Grp_Json}" VerticalAlignment="Center"/>
+                            <Button Style="{StaticResource HelpButton}" Tag="einstellungen-json" Click="Help_Click" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <CheckBox x:Name="chk_ConvertNumbers" Grid.Row="0" Grid.Column="1" Content="{l:Tr Chk_ConvertNumbers}"/>
+                        <CheckBox x:Name="chk_DecimalComma" Grid.Row="1" Grid.Column="1" Content="{l:Tr Chk_DecimalComma}"/>
+                        <CheckBox x:Name="chk_EmptyAsNull" Grid.Row="2" Grid.Column="1" Content="{l:Tr Chk_EmptyAsNull}"/>
+                        <CheckBox x:Name="chk_SkipEmpty" Grid.Row="3" Grid.Column="1" Content="{l:Tr Chk_SkipEmpty}"/>
+                        <TextBlock Grid.Row="4" Text="{l:Tr Lbl_StaticFields}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_StaticFields" Grid.Row="4" Grid.Column="1" ToolTip='{}{"quelle": "nachlieferung"}'/>
+                        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Text="{l:Tr Lbl_TsConvert}" FontWeight="Bold" Margin="0,8,0,2"/>
+                        <TextBlock Grid.Row="6" Text="{l:Tr Lbl_TsFormat}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_TsFormat" Grid.Row="6" Grid.Column="1" ToolTip="{l:Tr Tip_TsFormat}"/>
+                        <TextBlock Grid.Row="7" Text="{l:Tr Lbl_TsTimezone}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_TsTimezone" Grid.Row="7" Grid.Column="1" Width="200" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="8" Text="{l:Tr Lbl_TsOutput}" Style="{StaticResource FormLabel}"/>
+                        <ComboBox x:Name="cb_TsOutput" Grid.Row="8" Grid.Column="1" Width="200" HorizontalAlignment="Left">
+                            <ComboBoxItem Content="{l:Tr Ts_EpochMs}" Tag="epoch_ms"/>
+                            <ComboBoxItem Content="{l:Tr Ts_EpochS}" Tag="epoch_s"/>
+                            <ComboBoxItem Content="ISO 8601" Tag="iso"/>
+                            <ComboBoxItem Content="{l:Tr Ts_Unchanged}" Tag="unchanged"/>
+                        </ComboBox>
+                        <TextBlock Grid.Row="9" Text="{l:Tr Lbl_TsTarget}" Style="{StaticResource FormLabel}"/>
+                        <TextBox x:Name="tb_TsTarget" Grid.Row="9" Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                                 ToolTip="{l:Tr Tip_TsTarget}"/>
+                    </Grid>
+                </GroupBox>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

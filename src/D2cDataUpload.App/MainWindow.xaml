@@ -1,0 +1,92 @@
+<Window x:Class="D2cDataUpload.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:D2cDataUpload.App"
+        xmlns:v="clr-namespace:D2cDataUpload.App.Views"
+        Title="m2v / d2c DataUpload MQTT" Height="900" Width="1080" MinWidth="820" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}" FontFamily="Segoe UI"
+        Icon="pack://application:,,,/Assets/icon.ico"
+        Loaded="Window_Loaded" Closing="Window_Closing">
+    <Window.InputBindings>
+        <KeyBinding Key="F1" Command="ApplicationCommands.Help"/>
+        <KeyBinding Key="O" Modifiers="Control" Command="ApplicationCommands.Open"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Help" Executed="mi_Help_Click"/>
+        <CommandBinding Command="ApplicationCommands.Open" Executed="mi_Open_Click"/>
+    </Window.CommandBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- menu -->
+            <RowDefinition Height="Auto"/> <!-- update banner -->
+            <RowDefinition Height="*"/>    <!-- main content -->
+            <RowDefinition Height="Auto"/> <!-- footer -->
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Background="White" Padding="4,2" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,0,0,1">
+            <MenuItem Header="{l:Tr Menu_File}">
+                <MenuItem Header="{l:Tr Menu_OpenCsv}" InputGestureText="Ctrl+O" Click="mi_Open_Click"/>
+                <Separator/>
+                <MenuItem Header="{l:Tr Menu_Exit}" Click="mi_Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="{l:Tr Menu_Edit}">
+                <MenuItem Header="{l:Tr Menu_Settings}" Click="mi_Settings_Click"/>
+            </MenuItem>
+            <MenuItem Header="{l:Tr Menu_View}">
+                <MenuItem Header="{l:Tr Menu_Language}">
+                    <MenuItem x:Name="mi_LangDe" Header="Deutsch" IsCheckable="True" Click="mi_LangDe_Click"/>
+                    <MenuItem x:Name="mi_LangEn" Header="English" IsCheckable="True" Click="mi_LangEn_Click"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="{l:Tr Menu_Help}">
+                <MenuItem Header="{l:Tr Menu_HelpOpen}" InputGestureText="F1" Click="mi_Help_Click"/>
+                <MenuItem Header="{l:Tr Menu_QuickStart}" Tag="schnellstart" Click="mi_HelpTopic_Click"/>
+                <MenuItem Header="{l:Tr Menu_CsvExamples}" Tag="csv-beispiele" Click="mi_HelpTopic_Click"/>
+                <MenuItem Header="{l:Tr Menu_Troubleshooting}" Tag="fehlersuche" Click="mi_HelpTopic_Click"/>
+                <MenuItem Header="{l:Tr Menu_Installation}" Tag="installation" Click="mi_HelpTopic_Click"/>
+                <Separator/>
+                <MenuItem Header="{l:Tr Menu_CheckUpdates}" Click="mi_CheckUpdates_Click"/>
+                <MenuItem Header="{l:Tr Menu_OpenSettingsFolder}" Click="mi_SettingsFolder_Click"/>
+                <MenuItem Header="{l:Tr Menu_About}" Click="mi_About_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Hinweis: neue Version verfügbar / Programm wurde aktualisiert -->
+        <Border x:Name="bd_Update" Grid.Row="1" Visibility="Collapsed" Margin="8,8,8,0" Padding="12,6"
+                Background="{StaticResource AccentLightBrush}" BorderBrush="{StaticResource AccentBrush}"
+                BorderThickness="1" CornerRadius="6">
+            <DockPanel>
+                <Button x:Name="bt_UpdateClose" DockPanel.Dock="Right" Content="✕" MinWidth="28" Padding="6,2"
+                        ToolTip="{l:Tr Upd_Close}" Click="bt_UpdateClose_Click" Margin="6,0,0,0"/>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button x:Name="bt_UpdateDownload" Style="{StaticResource PrimaryButton}" Content="{l:Tr Upd_Download}"
+                            Click="bt_UpdateDownload_Click" Margin="6,0,0,0"/>
+                    <Button x:Name="bt_UpdateNotes" Content="{l:Tr Upd_Notes}" Click="bt_UpdateNotes_Click" Margin="6,0,0,0"/>
+                    <Button x:Name="bt_UpdateSkip" Content="{l:Tr Upd_Skip}" Click="bt_UpdateSkip_Click" Margin="6,0,0,0"/>
+                </StackPanel>
+                <TextBlock x:Name="tb_UpdateText" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextBrush}"/>
+            </DockPanel>
+        </Border>
+
+        <TabControl x:Name="tc_Main" Grid.Row="2" Margin="8,8,8,6" Background="{StaticResource AppBackgroundBrush}"
+                    BorderBrush="{StaticResource LineBrush}" SelectionChanged="tc_Main_SelectionChanged">
+            <TabItem x:Name="ti_Send" Header="{l:Tr Tab_Send}">
+                <v:SendView x:Name="SendPage"/>
+            </TabItem>
+            <TabItem x:Name="ti_Settings" Header="{l:Tr Tab_Settings}">
+                <v:SettingsView x:Name="SettingsPage"/>
+            </TabItem>
+        </TabControl>
+
+        <!-- Footer: links Firma, rechts Version (Entwickler nur im Info-Fenster) -->
+        <Border Grid.Row="3" Background="{StaticResource FooterBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0">
+            <DockPanel Margin="12,4">
+                <TextBlock x:Name="tb_FooterVersion" DockPanel.Dock="Right" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                <TextBlock x:Name="tb_FooterCompany" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

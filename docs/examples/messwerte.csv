@@ -1,0 +1,4 @@
+Zeitstempel;device;Spannung;Strom;Status
+01.01.2026 00:00:00;demo-01;24,10;38;OK
+01.01.2026 00:00:01;demo-02;23,85;41;OK
+01.01.2026 00:00:02;demo-01;24,02;37;OK

@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  core-tests:
+    name: Kernlogik + Broker-Tests (Linux, Mosquitto)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Mosquitto installieren
+        run: sudo apt-get update && sudo apt-get install -y mosquitto
+      - name: Tests
+        run: dotnet run --project tests/D2cDataUpload.Tests -c Release
+
+  windows-build:
+    name: WPF-Build + Tests (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build
+        run: dotnet build D2cDataUpload.slnx -c Release
+      - name: Tests (ohne Broker)
+        run: dotnet run --project tests/D2cDataUpload.Tests -c Release --no-build

@@ -1,0 +1,36 @@
+name: Fehler melden / Bug report
+description: Etwas funktioniert nicht wie erwartet
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bitte **keine** Passwörter, Broker-Adressen, Geräte-IDs oder Kundendaten einfügen.
+        Please do **not** paste passwords, broker addresses, device IDs or customer data.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Hilfe › Info bzw. Footer unten rechts
+      placeholder: "1.2.0"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Was ist passiert? / What happened?
+      description: Schritte zum Nachvollziehen, erwartetes und tatsächliches Verhalten
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log-Auszug
+      description: "%APPDATA%\\d2c_DataUpload_MQTT\\logs (vertrauliche Angaben entfernen)"
+      render: text
+  - type: textarea
+    id: csv
+    attributes:
+      label: CSV-Beispiel (anonymisiert)
+      description: Kopfzeile und 2–3 Zeilen mit Fantasiewerten
+      render: text

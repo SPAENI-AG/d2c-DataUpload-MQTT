@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hilfe – m2v / d2c DataUpload MQTT</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>m2v / d2c DataUpload MQTT – Hilfe</h1>
+  <div class="lang">Deutsch · <a href="en.html">English</a></div>
+</header>
+<div class="wrap">
+<nav>
+  <a href="#ueberblick">Überblick</a>
+  <a href="#schnellstart">Schnellstart</a>
+  <a href="#csv-beispiele">CSV-Beispiele</a>
+  <a href="#zuordnung">Zuordnung der Spalten</a>
+  <a href="#senden">Senden &amp; Fortschritt</a>
+  <a href="#fortsetzen">Unterbruch &amp; Fortsetzen</a>
+  <a href="#installation">Installation &amp; Updates</a>
+  <a href="#einstellungen">Einstellungen</a>
+  <a class="sub" href="#einstellungen-allgemein">Allgemein</a>
+  <a class="sub" href="#einstellungen-broker">MQTT-Broker</a>
+  <a class="sub" href="#einstellungen-senden">Senden</a>
+  <a class="sub" href="#einstellungen-csv">CSV-Format</a>
+  <a class="sub" href="#einstellungen-json">JSON-Optionen</a>
+  <a href="#fehlersuche">Fehlersuche</a>
+  <a href="#dateien">Dateien &amp; Ordner</a>
+</nav>
+<main>
+
+<section id="ueberblick">
+<h2>Überblick</h2>
+<p>Das Programm liest eine CSV-Datei Zeile für Zeile und sendet <b>jede Zeile als eine MQTT-Nachricht</b> an einen Broker – gedrosselt, damit Broker und Cloud nicht überlastet werden. Typischer Einsatz: Messdaten, die während eines Verbindungsausfalls lokal gespeichert wurden, nachträglich in die Cloud liefern.</p>
+<ul>
+  <li>Dateien mit mehreren 100'000 Zeilen werden gestreamt (geringer Speicherbedarf).</li>
+  <li>Senderate einstellbar (Standard 50 Nachrichten/s).</li>
+  <li>Bei Abbruch kann ab der letzten sicher gesendeten Zeile fortgesetzt werden.</li>
+</ul>
+</section>
+
+<section id="schnellstart">
+<h2>Schnellstart</h2>
+<ol>
+  <li>Register <b>Einstellungen</b>: Host, Port, Benutzer/Passwort eintragen, bei Bedarf TLS aktivieren → <b>Verbindung testen</b> → <b>Einstellungen speichern</b>.</li>
+  <li>Register <b>Senden</b>: <b>CSV öffnen …</b> (<kbd>Ctrl</kbd>+<kbd>O</kbd>). Hilfe jederzeit mit <kbd>F1</kbd> oder den <b>?</b>-Knöpfen.</li>
+  <li>Im Bereich <b>Zuordnung der Spalten</b> prüfen, welche Spalte das <span class="t">Topic</span> und welche die <span class="p">Payload</span> ist. Die Spalten werden in der Vorschau-Tabelle farbig markiert.</li>
+  <li>Das Feld <i>Vorschau der ersten MQTT-Nachricht</i> kontrollieren.</li>
+  <li>Optional <b>Prüflauf</b>: prüft die ganze Datei, ohne zu senden.</li>
+  <li><b>▶ Senden starten</b> und Rückfrage bestätigen.</li>
+</ol>
+</section>
+
+<section id="csv-beispiele">
+<h2>CSV-Beispiele</h2>
+<h3>A) Topic und Payload stehen fertig in der Datei</h3>
+<p>Häufigster Fall bei Exporten aus Node-RED / einer Offline-Queue:</p>
+<pre>timestamp;topic;payload
+2026-10-01 12:00:00;d2c/TWA01/energy;{"u":26.3,"i":38}
+2026-10-01 12:00:01;d2c/TWA02/energy;{"u":20.8,"i":49}</pre>
+<p>Zuordnung: Topic <i>aus Spalte</i> = <span class="t">topic</span>, Payload <i>aus Spalte</i> = <span class="p">payload</span>. Die Payload wird <b>unverändert</b> gesendet. Weitere Spalten (hier <code>timestamp</code>) werden ignoriert.</p>
+<div class="note">Enthält die Payload das Trennzeichen (z.B. <code>,</code> in JSON und <code>,</code> als CSV-Trenner), muss das Feld in Anführungszeichen stehen und innere <code>"</code> verdoppelt sein: <code>"{""u"":26.3,""i"":38}"</code>. So exportieren Excel und die meisten Tools automatisch.</div>
+
+<h3>B) Messwerte in einzelnen Spalten</h3>
+<pre>Zeitstempel;device;Spannung;Strom;Status
+01.10.2026 00:00:00;TWA00;26,30;38;OK</pre>
+<p>Zuordnung: Topic <i>Vorlage</i> <code>d2c/{device}/data</code>, Payload <i>JSON aus Spalten</i>. Ergebnis:</p>
+<pre>Topic:   d2c/TWA00/data
+Payload: {"Zeitstempel":1790805600000,"device":"TWA00","Spannung":26.3,"Strom":38,"Status":"OK"}</pre>
+<p>(mit Zeitstempel-Spalte = Zeitstempel, Dezimalkomma aktiv, Ausgabe Epoch ms)</p>
+</section>
+
+<section id="zuordnung">
+<h2>Zuordnung der Spalten</h2>
+<p>Beim Öffnen einer Datei versucht das Programm die Spalten zu erraten (Namen wie <code>topic</code>, <code>path</code>, <code>pfad</code> bzw. <code>payload</code>, <code>message</code>, <code>data</code>). Die Auswahl wird gespeichert und beim nächsten Öffnen einer Datei mit gleichen Spaltennamen wieder verwendet.</p>
+<h3>Topic</h3>
+<table>
+<tr><th>Option</th><th>Bedeutung</th></tr>
+<tr><td><b>aus Spalte</b></td><td>Der Text der gewählten Spalte ist das Topic. Mit <b>Präfix</b> kann etwas vorangestellt werden, z.B. Präfix <code>d2c/</code> + Spalte <code>TWA01/energy</code> → <code>d2c/TWA01/energy</code>.</td></tr>
+<tr><td><b>Vorlage</b></td><td>Topic wird zusammengesetzt. <code>{Spaltenname}</code> wird durch den Wert der Zeile ersetzt, <code>{row}</code> durch die Zeilennummer. Beispiel: <code>d2c/{device}/data</code>.</td></tr>
+</table>
+<p>Leere Topics sowie Topics mit <code>+</code> oder <code>#</code> sind in MQTT nicht erlaubt – solche Zeilen werden übersprungen und im Log gemeldet.</p>
+<h3>Payload</h3>
+<table>
+<tr><th>Option</th><th>Bedeutung</th></tr>
+<tr><td><b>aus Spalte</b></td><td>Der Text der Spalte wird unverändert als Payload gesendet. Mit <b>muss gültiges JSON sein</b> werden Zeilen mit ungültigem JSON übersprungen statt gesendet.</td></tr>
+<tr><td><b>JSON aus Spalten</b></td><td>Aus den <b>angehakten</b> Spalten wird ein JSON-Objekt gebaut (Spaltenname = Schlüssel). Optional wird eine <b>Zeitstempel-Spalte</b> umgewandelt. Weitere Optionen unter <a href="#einstellungen-json">Einstellungen → JSON-Optionen</a>.</td></tr>
+</table>
+<p>In der Vorschau-Tabelle sind die Spalten markiert: <span class="t">[Topic]</span>, <span class="p">[Payload]</span>; nicht angehakte JSON-Spalten erscheinen grau.</p>
+</section>
+
+<section id="senden">
+<h2>Senden &amp; Fortschritt</h2>
+<table>
+<tr><th>Element</th><th>Funktion</th></tr>
+<tr><td>Ab Datenzeile</td><td>Erste zu sendende Zeile (1 = erste Zeile nach der Kopfzeile).</td></tr>
+<tr><td>Anzahl</td><td>Wie viele Zeilen gesendet werden. 0 = bis zum Dateiende. Praktisch für einen Test mit z.B. 10 Zeilen.</td></tr>
+<tr><td>Prüflauf</td><td>Liest die ganze Datei, baut alle Nachrichten, sendet aber nichts. Fehlerhafte Zeilen erscheinen im Log.</td></tr>
+<tr><td>⏸ Pause / ▶ Weiter</td><td>Hält das Senden an; die Verbindung bleibt bestehen.</td></tr>
+<tr><td>■ Stopp</td><td>Beendet das Senden. Der Fortsetzungspunkt wird gespeichert.</td></tr>
+<tr><td>Position</td><td>Bis zu dieser Zeile ist alles sicher gesendet (bei QoS 1/2: vom Broker bestätigt).</td></tr>
+<tr><td>Bestätigt (offen)</td><td>Vom Broker bestätigte Nachrichten; in Klammern noch unbestätigte.</td></tr>
+<tr><td>Übersprungen</td><td>Zeilen, die nicht gesendet werden konnten (z.B. leeres Topic). Details im Log.</td></tr>
+<tr><td>Rate / Restzeit</td><td>Aktuelle Senderate (gleitend über 5 s) und geschätzte Restdauer.</td></tr>
+</table>
+<p>Dauer-Beispiel: 500'000 Zeilen bei 50/s ≈ 2 h 47 min.</p>
+</section>
+
+<section id="fortsetzen">
+<h2>Unterbruch &amp; Fortsetzen</h2>
+<ul>
+  <li><b>Verbindungsabbruch:</b> Das Programm baut die Verbindung automatisch wieder auf und sendet unbestätigte Nachrichten erneut. Es geht nichts verloren.</li>
+  <li><b>Stopp, Absturz, PC-Neustart:</b> Alle 2 s wird pro Datei gespeichert, bis wohin sicher gesendet wurde. Beim erneuten Öffnen erscheint <b>Fortsetzen ab Zeile X</b> → anklicken → Senden starten.</li>
+  <li>Der Fortsetzungspunkt gilt nur für <b>dieselbe, unveränderte Datei</b> (Pfad, Grösse, Änderungsdatum).</li>
+</ul>
+<div class="note warn">Bei QoS 1 gilt „mindestens einmal“: Nach einem Abbruch können einzelne Nachrichten doppelt in der Cloud ankommen. Die Empfangsseite sollte doppelte Datensätze (z.B. gleicher Zeitstempel) tolerieren.</div>
+</section>
+
+<section id="installation">
+<h2>Installation &amp; Updates</h2>
+<h3>Installieren</h3>
+<ol>
+  <li>Auf GitHub unter <b>Releases</b> die neueste Datei <code>d2c_DataUpload_MQTT_…_win-x64.zip</code> herunterladen.</li>
+  <li>ZIP in einen eigenen Ordner entpacken, z.B. <code>C:\Tools\d2c_DataUpload_MQTT</code>.</li>
+  <li><code>d2c_DataUpload_MQTT.exe</code> starten. Keine Installation und keine Admin-Rechte nötig; .NET ist enthalten.</li>
+</ol>
+<div class="note">Erscheint die Windows-Meldung „Der Computer wurde durch Windows geschützt“: <i>Weitere Informationen → Trotzdem ausführen</i>. Das passiert bei Programmen ohne bekannte Signatur.</div>
+<h3>Updates</h3>
+<ul>
+  <li>Beim Start fragt das Programm höchstens einmal täglich bei GitHub nach einer neueren Version (abschaltbar unter <a href="#einstellungen-allgemein">Einstellungen → Allgemein</a>). Es werden dabei keine Daten übertragen.</li>
+  <li>Ist eine neue Version verfügbar, erscheint oben ein blauer Hinweis mit <b>Herunterladen</b>, <b>Was ist neu</b> und <b>Diese Version überspringen</b>.</li>
+  <li>Manuell: Menü <i>Hilfe → Nach Updates suchen …</i></li>
+  <li>Aktualisieren: Programm schliessen, neue ZIP in denselben Ordner entpacken (Dateien ersetzen), neu starten. Einstellungen, Passwort und Fortsetzungspunkte bleiben erhalten (sie liegen nicht im Programmordner).</li>
+  <li>Nach dem ersten Start einer neuen Version zeigt der Hinweis einmalig <b>Aktualisiert auf Version …</b> mit Link zu den Neuerungen.</li>
+</ul>
+</section>
+
+<section id="einstellungen">
+<h2>Einstellungen</h2>
+<p>Änderungen werden mit <b>Einstellungen speichern</b> oder beim Wechsel ins Register <i>Senden</i> übernommen.</p>
+
+<h3 id="einstellungen-allgemein">Allgemein</h3>
+<p><b>Beim Start nach neuen Versionen suchen</b>: siehe <a href="#installation">Installation &amp; Updates</a>.</p>
+<p><b>Sprache</b>: Deutsch oder English. Auch über das Menü <i>Ansicht → Sprache</i> umschaltbar; die Oberfläche wechselt sofort. Die Hilfe öffnet sich in der gewählten Sprache.</p>
+
+<h3 id="einstellungen-broker">MQTT-Broker</h3>
+<table>
+<tr><th>Feld</th><th>Bedeutung</th></tr>
+<tr><td>Host / Port</td><td>Adresse des Brokers. Üblich: 1883 (ohne TLS), 8883 (mit TLS).</td></tr>
+<tr><td>Client-ID</td><td>Muss am Broker eindeutig sein. Zwei Programme mit gleicher ID werfen sich gegenseitig raus.</td></tr>
+<tr><td>Benutzer / Passwort</td><td>Leer lassen, wenn der Broker keine Anmeldung verlangt. Das Passwort wird <b>verschlüsselt</b> gespeichert (Windows-DPAPI): nur derselbe Windows-Benutzer auf diesem PC kann es lesen. Nach einem PC- oder Benutzerwechsel muss es neu eingegeben werden.</td></tr>
+<tr><td>Keepalive</td><td>Intervall der Lebenszeichen in Sekunden (Standard 60).</td></tr>
+<tr><td>TLS verwenden</td><td>Verschlüsselte Verbindung (mqtts).</td></tr>
+<tr><td>CA-Zertifikat</td><td>Nur nötig bei eigener / firmeninterner Zertifizierungsstelle. Leer = Zertifikatsspeicher des Systems.</td></tr>
+<tr><td>Zertifikat nicht prüfen</td><td>Nur für Tests! Die Verbindung ist dann nicht gegen Mitlesen geschützt.</td></tr>
+<tr><td>Verbindung testen</td><td>Baut eine Testverbindung auf und meldet das Ergebnis.</td></tr>
+</table>
+
+<h3 id="einstellungen-senden">Senden</h3>
+<table>
+<tr><th>Feld</th><th>Bedeutung</th></tr>
+<tr><td>QoS</td><td>0 = höchstens einmal (schnell, ohne Bestätigung, Verlust möglich) · <b>1 = mindestens einmal (empfohlen)</b> · 2 = genau einmal (langsamer).</td></tr>
+<tr><td>Retain</td><td>Broker speichert die letzte Nachricht pro Topic. Für Nachlieferungen normalerweise <b>aus</b>, sonst überschreiben alte Werte den aktuellen Retain-Wert.</td></tr>
+<tr><td>Senderate (max.)</td><td>Obergrenze Nachrichten pro Sekunde. Nach einer Pause wird nicht „nachgeholt“.</td></tr>
+<tr><td>Max. unbestätigt</td><td>So viele Nachrichten dürfen gleichzeitig auf Bestätigung warten. Ist der Broker langsamer, bremst das Programm automatisch.</td></tr>
+</table>
+
+<h3 id="einstellungen-csv">CSV-Format</h3>
+<table>
+<tr><th>Feld</th><th>Bedeutung</th></tr>
+<tr><td>Trennzeichen</td><td><code>auto</code> erkennt <code>;</code> <code>,</code> TAB <code>|</code> anhand der Kopfzeile.</td></tr>
+<tr><td>Zeichensatz</td><td><code>utf-8</code> für UTF-8 (mit oder ohne BOM). <code>windows-1252</code> für ältere Excel-Exporte, wenn Umlaute falsch angezeigt werden.</td></tr>
+</table>
+<p>Die erste Zeile muss die Spaltennamen enthalten. Leere Zeilen werden ignoriert.</p>
+
+<h3 id="einstellungen-json">JSON aus Spalten – Optionen</h3>
+<p>Gilt nur, wenn die Payload als <i>JSON aus Spalten</i> gebaut wird.</p>
+<table>
+<tr><th>Feld</th><th>Bedeutung</th></tr>
+<tr><td>Zahlen als Zahl senden</td><td><code>12.5</code> wird zu <code>12.5</code> statt <code>"12.5"</code>. <code>'</code> als Tausendertrennzeichen wird entfernt.</td></tr>
+<tr><td>Dezimalkomma</td><td><code>1.234,5</code> → <code>1234.5</code>.</td></tr>
+<tr><td>Leere Zellen</td><td>als <code>null</code>, als <code>""</code> oder ganz weglassen.</td></tr>
+<tr><td>Zusatzfelder (JSON)</td><td>Werden in jede Nachricht eingefügt, z.B. <code>{"quelle": "nachlieferung"}</code>.</td></tr>
+<tr><td>Eingabeformat</td><td><code>auto</code> erkennt ISO (<code>2026-10-01T12:00:00</code>), <code>01.10.2026 12:00:00</code> und Epoch (s/ms). Sonst .NET-Format, z.B. <code>dd.MM.yyyy HH:mm:ss</code>.</td></tr>
+<tr><td>Zeitzone</td><td>Für Zeitangaben ohne Zeitzone, Standard <code>Europe/Zurich</code> (Sommer-/Winterzeit wird berücksichtigt).</td></tr>
+<tr><td>Ausgabe</td><td>Epoch Millisekunden, Epoch Sekunden, ISO 8601 oder unverändert.</td></tr>
+<tr><td>JSON-Feldname</td><td>Anderer Name für das Zeitstempel-Feld, z.B. <code>ts</code>.</td></tr>
+</table>
+</section>
+
+<section id="fehlersuche">
+<h2>Fehlersuche</h2>
+<table>
+<tr><th>Meldung</th><th>Ursache / Lösung</th></tr>
+<tr><td>Verbindung abgelehnt (Port/Host prüfen)</td><td>Am Port läuft kein Broker oder eine Firewall blockiert.</td></tr>
+<tr><td>Hostname nicht gefunden</td><td>Tippfehler im Host, kein Netzwerk oder VPN nicht verbunden.</td></tr>
+<tr><td>Keine Antwort vom Broker</td><td>Meist TLS falsch: TLS-Port ohne TLS-Haken oder umgekehrt.</td></tr>
+<tr><td>TLS-Zertifikat ungültig</td><td>CA-Zertifikat fehlt oder passt nicht; Hostname stimmt nicht mit dem Zertifikat überein.</td></tr>
+<tr><td>Verbindung vom Broker abgelehnt: Not authorized</td><td>Benutzer/Passwort falsch oder keine Berechtigung (ACL) für das Topic.</td></tr>
+<tr><td>Verbindung getrennt … Wiederaufbau</td><td>Netzunterbruch oder Broker-Neustart. Das Programm verbindet sich selbst neu. Häufige Trennungen: Client-ID wird ein zweites Mal verwendet.</td></tr>
+<tr><td>Topic ist leer / Payload ist leer</td><td>Zelle in dieser Zeile leer → Zeile übersprungen.</td></tr>
+<tr><td>Payload ist kein gültiges JSON</td><td>Nur mit Option <i>muss gültiges JSON sein</i>. Oft verdoppelte <code>""</code> falsch exportiert.</td></tr>
+<tr><td>X Spalten statt Y</td><td>Zeile hat mehr Felder als die Kopfzeile – meist Trennzeichen im Text ohne Anführungszeichen.</td></tr>
+<tr><td>Umlaute falsch</td><td>Zeichensatz auf <code>windows-1252</code> umstellen und <b>Neu laden</b>.</td></tr>
+<tr><td>Rate tiefer als eingestellt</td><td>Broker bestätigt langsam (Max. unbestätigt erreicht) oder schwache Verbindung.</td></tr>
+</table>
+</section>
+
+<section id="dateien">
+<h2>Dateien &amp; Ordner</h2>
+<p>Alles liegt unter <code>%APPDATA%\d2c_DataUpload_MQTT\</code> (Menü <i>Hilfe → Einstellungsordner öffnen</i>):</p>
+<ul>
+  <li><code>settings.json</code> – Einstellungen, Zuordnung und Fortsetzungspunkte</li>
+  <li><code>logs\upload_JJJJMMTT.log</code> – Log pro Tag</li>
+</ul>
+<p>Die CSV-Datei selbst wird nie verändert. Einstellungen bleiben bei Updates erhalten.</p>
+</section>
+
+<footer class="foot">SPÄNI Elektro-Mechanik AG · Support: <a href="https://support.elektro-spaeni.ch">support.elektro-spaeni.ch</a> · <a href="mailto:support@elektro-spaeni.ch">support@elektro-spaeni.ch</a></footer>
+</main>
+</div>
+</body>
+</html>

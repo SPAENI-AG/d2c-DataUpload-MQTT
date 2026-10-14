@@ -1,0 +1,24 @@
+<Project>
+  <!--
+    Gemeinsame Angaben für alle Projekte.
+    Version: EINZIGE Stelle (Footer, Info, Update-Prüfung). Release-Workflow überschreibt sie aus dem Git-Tag.
+    GitHubRepository: "Organisation/Repository" – wird für die Update-Prüfung ins Programm eingebaut.
+  -->
+  <PropertyGroup>
+    <Version>1.2.0</Version>
+    <GitHubRepository>OWNER/d2c-dataupload-mqtt</GitHubRepository>
+
+    <Product>m2v / d2c DataUpload MQTT</Product>
+    <Company>SPÄNI Elektro-Mechanik AG</Company>
+    <Authors>SPÄNI Elektro-Mechanik AG</Authors>
+    <Copyright>© SPÄNI Elektro-Mechanik AG</Copyright>
+    <RepositoryUrl>https://github.com/$(GitHubRepository)</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="GitHubRepository" Value="$(GitHubRepository)" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/D2cDataUpload.App/D2cDataUpload.App.csproj" />
+    <Project Path="src/D2cDataUpload.Core/D2cDataUpload.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/D2cDataUpload.Tests/D2cDataUpload.Tests.csproj" />
+  </Folder>
+</Solution>

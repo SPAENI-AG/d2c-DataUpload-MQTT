@@ -1,0 +1,95 @@
+name: Release
+
+# Auslöser: Tag "v1.2.3" pushen (git tag v1.2.3 && git push origin v1.2.3).
+# Ergebnis: GitHub-Release mit d2c_DataUpload_MQTT_<version>_win-x64.zip (Einzeldatei, .NET enthalten)
+# und SHA-256-Prüfsumme. Die Update-Prüfung im Programm findet dieses Release automatisch.
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      HAS_SIGNING: ${{ secrets.SIGN_PFX_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Version aus Tag prüfen
+        id: ver
+        shell: pwsh
+        run: |
+          $v = "${{ github.ref_name }}".TrimStart('v')
+          [xml]$props = Get-Content Directory.Build.props
+          $p = ($props.Project.PropertyGroup | Where-Object { $_.Version }).Version
+          if ($p -ne $v) { throw "Tag v$v passt nicht zu <Version>$p</Version> in Directory.Build.props – zuerst Version erhöhen und committen." }
+          "version=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Tests
+        run: dotnet run --project tests/D2cDataUpload.Tests -c Release
+
+      - name: Veröffentlichen (win-x64, self-contained, Einzeldatei)
+        run: >
+          dotnet publish src/D2cDataUpload.App/D2cDataUpload.App.csproj -c Release -r win-x64
+          --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:DebugType=none -o publish/app
+
+      # Optional: Code-Signing. Secrets SIGN_PFX_BASE64 (PFX als Base64) und SIGN_PFX_PASSWORD
+      # im Repository unter Settings › Secrets › Actions anlegen. Ohne Secrets wird nicht signiert.
+      - name: Signieren
+        if: env.HAS_SIGNING == 'true'
+        env:
+          SIGN_PFX_BASE64: ${{ secrets.SIGN_PFX_BASE64 }}
+          SIGN_PFX_PASSWORD: ${{ secrets.SIGN_PFX_PASSWORD }}
+        shell: pwsh
+        run: |
+          $pfx = Join-Path $env:RUNNER_TEMP "sign.pfx"
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:SIGN_PFX_BASE64))
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" | Sort-Object FullName -Descending | Select-Object -First 1
+          & $signtool.FullName sign /f $pfx /p $env:SIGN_PFX_PASSWORD /fd sha256 /tr http://timestamp.digicert.com /td sha256 publish/app/d2c_DataUpload_MQTT.exe
+          if ($LASTEXITCODE -ne 0) { throw "Signieren fehlgeschlagen" }
+          Remove-Item $pfx
+
+      - name: ZIP + Prüfsumme
+        id: zip
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.version }}"
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          Copy-Item LICENSE, CHANGELOG.md publish/app/
+          $zip = "artifacts/d2c_DataUpload_MQTT_${v}_win-x64.zip"
+          Compress-Archive -Path publish/app/* -DestinationPath $zip -Force
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+          "$hash  $(Split-Path $zip -Leaf)" | Out-File "$zip.sha256" -Encoding ascii
+          "zip=$zip" >> $env:GITHUB_OUTPUT
+
+      - name: Release-Notizen aus CHANGELOG.md
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.version }}"
+          $lines = Get-Content CHANGELOG.md
+          $start = ($lines | Select-String -Pattern "^## \[?$([regex]::Escape($v))\]?" | Select-Object -First 1).LineNumber
+          if ($start) {
+            $rest = $lines[$start..($lines.Count-1)]
+            $end = ($rest | Select-String -Pattern '^## ' | Select-Object -First 1).LineNumber
+            $notes = if ($end) { $rest[0..($end-2)] } else { $rest }
+            $notes -join "`n" | Out-File notes.md -Encoding utf8
+          } else {
+            "Siehe CHANGELOG.md" | Out-File notes.md -Encoding utf8
+          }
+
+      - name: GitHub-Release erstellen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.version }}"
+          gh release create "${{ github.ref_name }}" "${{ steps.zip.outputs.zip }}" "${{ steps.zip.outputs.zip }}.sha256" `
+            --title "d2c DataUpload MQTT $v" --notes-file notes.md
